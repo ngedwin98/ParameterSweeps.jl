@@ -2,3 +2,7 @@ name = "ParameterSweeps"
 uuid = "e48732ce-4a52-4222-9b57-d2aae626e276"
 authors = ["edwin <ngedwin98@gmail.com>"]
 version = "0.1.0"
+
+[deps]
+DataFrames = "a93c6f00-e57d-5684-b7b6-d8193f3e46c0"
+JSON = "682c06a0-de6a-54ab-a142-c8b1cf79cde6"

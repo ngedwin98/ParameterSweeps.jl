@@ -1,6 +1,7 @@
 module ParameterSweeps
 
 using JSON
+using DataFrames
 
 function load_params(params_dict::Dict{Symbol,<:Number})
     length(ARGS) > 0 && open(joinpath(ARGS[1],"params.json"), "r") do f
