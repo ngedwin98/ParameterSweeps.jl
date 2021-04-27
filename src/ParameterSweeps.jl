@@ -46,17 +46,17 @@ function slice_df(df::DataFrame, axes::Symbol...)
         for vals in Base.product(vars...)], collect(vars)
 end
 
-function get_by_rf(rf::String, data_file::String; parse=file->read(file), fun=identity)
+function get_by_rf(rf::String, data_file::String, parse=file->read(file), func=identity)
     if ~isfile(joinpath("rfs",rf,data_file))
         return Missing
     end
     data = open(joinpath("rfs",rf,data_file)) do file
         parse(file)
     end
-    return fun(data)
+    return func(data)
 end
 
-function get_first_by_df(df, data_file, parse, fun)
+function get_first_by_df(df::DataFrame, data_file::String, parse, fun)
     return get_by_rf(df[1,:ID], data_file, parse, fun)
 end
 
