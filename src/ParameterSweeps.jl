@@ -18,16 +18,13 @@ end
 
 function get_params(sim::String, rf::String)
     params = JSON.parsefile(joinpath(sim,"rfs",rf,"params.json"))
-    return Dict{Symbol,Number}(Symbol(k)=>v for (k,v) in params)
+    return Dict(Symbol(k)=>v for (k,v) in params)
 end
 
 function get_df(sim::String, cols::Symbol...)
     rfs = readdir(joinpath(sim,"rfs"))
     params = get_params.(sim,rfs)
     df = DataFrame(ID=rfs)
-    if isempty(cols)
-        cols = keys(first(params))
-    end
     for c in cols
         df[!,c] = getindex.(params,c)
     end
@@ -42,8 +39,22 @@ end
 function slice_df(df::DataFrame, axes::Symbol...)
     df = sort(df, reverse(collect(axes)))
     vars = (unique(df[!,a]) for a in axes)
-    return [filter(row->all(row[a]≈v for (a,v) in zip(axes,vals)),df)
+    return [filter(row->all(isequal(row[a],v) for (a,v) in zip(axes,vals)),df)
         for vals in Base.product(vars...)], collect(vars)
+end
+
+function get_by_rf(rf::String, data_file::String; parse=file->read(file), fun=identity)
+    if ~isfile(joinpath("rfs",rf,data_file))
+        return Missing
+    end
+    data = open(joinpath("rfs",rf,data_file)) do file
+        parse(file)
+    end
+    return fun(data)
+end
+
+function get_first_by_df(df, data_file, parse, fun)
+    return get_by_rf(df[1,:ID], data_file, parse, fun)
 end
 
 end # module
