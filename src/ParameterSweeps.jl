@@ -3,8 +3,9 @@ module ParameterSweeps
 using JSON
 using DataFrames
 
-function load_params(params_dict::Dict{Symbol,<:Number})
-    length(ARGS) > 0 && open(joinpath(ARGS[1],"params.json"), "r") do f
+function load_params(params_dict::Dict{Symbol,<:Any})
+    filename = joinpath(prod(ARGS), "params.json")
+    ispath(filename) && open(filename, "r") do f
         json_dict = JSON.parse(f)
         for k in keys(params_dict)
             params_dict[k] = json_dict[String(k)]
