@@ -1,6 +1,8 @@
 module ParameterSweeps
 
-using JSON
+export load_params, get_df, convert_col!, slice_df, get_by_rf, get_first_by_df
+
+import JSON
 using DataFrames
 
 function load_params(params_dict::Dict{Symbol,<:Any})
