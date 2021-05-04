@@ -1,11 +1,12 @@
 module ParameterSweeps
 
-export load_params, get_df, convert_col!, slice_df, get_by_rf, get_first_by_df
+export read_params, unpack, rf_join
+export get_df, convert_col!, slice_df, get_by_rf, get_first_by_df
 
 import JSON
 using DataFrames
 
-function load_params(params_dict::Dict{Symbol,<:Any})
+function read_params(params_dict::Dict{Symbol,<:Any})
     filename = joinpath(prod(ARGS), "params.json")
     ispath(filename) && open(filename, "r") do f
         json_dict = JSON.parse(f)
@@ -13,10 +14,19 @@ function load_params(params_dict::Dict{Symbol,<:Any})
             params_dict[k] = json_dict[String(k)]
         end
     end
+    return params_dict
+end
+
+function unpack(params_dict::Dict{Symbol,<:Any})
     for (k,v) in params_dict
         Core.eval(Main, :($k = $v))
     end
-    return params_dict
+end
+
+function rf_join(loc::String)
+    rf = prod(ARGS)
+    rf = ispath(joinpath(rf,"params.json")) ? rf : ""
+    return joinpath(rf, loc)
 end
 
 function get_params(sim::String, rf::String)
